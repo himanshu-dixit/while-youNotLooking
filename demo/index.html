@@ -1,0 +1,88 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>While(you're not looking)</title>
+  <link rel="stylesheet" href="assets/demo.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="../build/tracking-min.js"></script>
+  <script src="../build/data/face-min.js"></script>
+  <script src="../../dat-gui/build/dat.gui.min.js"></script>
+  <script src="assets/stats.min.js"></script>
+
+  <style>
+  body{
+    background: #fff;
+  }
+  video{
+    margin-top: 50px;
+  }
+  .topbar{
+    height: 70px;
+    width: 100%;
+    background: #04d193;
+  }
+  .footer{
+    height: 50px;
+    width: 100%;
+    background: #ebeeef;
+  }
+
+  </style>
+</head>
+<body>
+  <div class="topbar">
+  </div>
+  <div class="body">
+    <div class="row">
+      <div class="col-sm-4">
+        <video id="video" width="500" preload autoplay loop muted></video>
+      </div>
+      <div class="col-sm-8">
+        <canvas id="canvas"  width="960" height="1200"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+  </div>
+  <script>
+    var snapcount = 0;
+    window.onload = function() {
+      var count = 0;
+      var tracker = new tracking.ObjectTracker('face');
+      tracker.setInitialScale(2.4);
+      tracker.setStepSize(2.1);
+      tracker.setEdgesDensity(0.14);
+      tracking.track('#video', tracker, { camera: true });
+      tracker.on('track', function(event) {
+        if(event.data.length){
+          count = 0;
+        }
+        else {
+          if (count<10){
+            count++;
+          }
+          else{
+            snap();
+            count = 0 ;
+          }
+        }
+      });
+    };
+    function snap(){
+      var video = document.getElementById("video");
+      var canvas = document.getElementById("canvas");
+      var x = snapcount%4;
+      var y = Math.floor(snapcount/4);
+      canvas.getContext("2d").drawImage(video, 240*x, 135*y , 240,135);
+			var img = canvas.toDataURL("image/png");
+      snapcount++;
+      if(snapcount==20){
+        snapcount = 0;
+      }
+    }
+  </script>
+
+</body>
+</html>
